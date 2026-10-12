@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — CyberShield AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="login-page">
+    <aside class="login-visual" aria-hidden="true">
+      <div class="login-brand">Cyber<span>Shield</span></div>
+      <div class="login-copy">
+        <h2>Process telemetry and threat labels in one ops console.</h2>
+        <p>Monitor OS events, review AI risk scores, and open investigations from a single queue.</p>
+      </div>
+      <div class="login-meta">TEAM ROCKET · DBMS / OS DEMO</div>
+    </aside>
+    <div class="login-panel">
+      <div class="login-wrap">
+        <h1>Sign in</h1>
+        <p>Use the demo admin account to open the console.</p>
+        <div class="err" id="err" role="alert" aria-live="polite"></div>
+        <form id="form">
+          <label for="uname">Username</label>
+          <input id="uname" name="uname" autocomplete="username" value="admin" required />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" value="admin123" required />
+          <button class="btn" type="submit">Continue</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="/js/login.js"></script>
+</body>
+</html>
