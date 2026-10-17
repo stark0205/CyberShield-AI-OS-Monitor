@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS usr (
     uname       VARCHAR(50) NOT NULL UNIQUE,
     email       VARCHAR(100) NOT NULL UNIQUE,
     pwd_hash    VARCHAR(255) NOT NULL,
-    role        VARCHAR(20) DEFAULT 'admin',
-    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+    role        VARCHAR(20) NOT NULL DEFAULT 'user',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_usr_role CHECK (role IN ('admin', 'user'))
 );
 
 CREATE TABLE IF NOT EXISTS device (
@@ -53,13 +54,17 @@ CREATE TABLE IF NOT EXISTS investigation (
     inv_id      INT AUTO_INCREMENT PRIMARY KEY,
     tid         INT NOT NULL,
     uid         INT NOT NULL,
-    status      VARCHAR(30) DEFAULT 'Open'
+    status      VARCHAR(30) NOT NULL DEFAULT 'Open'
         CHECK (status IN ('Open', 'In Progress', 'Closed')),
     notes       TEXT,
     started_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
     closed_at   DATETIME,
     FOREIGN KEY (tid) REFERENCES threat(tid) ON DELETE CASCADE,
-    FOREIGN KEY (uid) REFERENCES usr(uid) ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES usr(uid) ON DELETE CASCADE,
+    CONSTRAINT chk_investigation_closed_at CHECK (
+        (status = 'Closed' AND closed_at IS NOT NULL)
+        OR (status <> 'Closed' AND closed_at IS NULL)
+    )
 );
 
 CREATE TABLE IF NOT EXISTS resp_action (
@@ -81,7 +86,8 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 
 CREATE INDEX idx_event_ts ON sec_event(ts);
-CREATE INDEX idx_event_did ON sec_event(did);
+CREATE INDEX idx_event_did_ts ON sec_event(did, ts);
 CREATE INDEX idx_threat_risk ON threat(risk_lvl);
 CREATE INDEX idx_inv_status ON investigation(status);
+CREATE INDEX idx_inv_uid_started ON investigation(uid, started_at);
 CREATE INDEX idx_audit_ts ON audit_log(ts);
