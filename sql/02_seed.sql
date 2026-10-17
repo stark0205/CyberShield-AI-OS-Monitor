@@ -1,5 +1,4 @@
 -- CyberShield AI - sample data
--- password for admin is: admin123
 -- pwd_hash is set by backend/setup_db.py (bcrypt)
 
 USE cybershield;
