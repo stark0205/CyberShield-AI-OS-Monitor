@@ -9,43 +9,21 @@ import joblib
 HERE = Path(__file__).resolve().parent
 CSV = HERE / "events_train.csv"
 OUT = HERE / "threat_model.pkl"
-FEATURES = [
-    "cpu_pct",
-    "mem_mb",
-    "etype_encoded",
-    "hour_of_day",
-    "is_sys_dir",
-    "proc_count",
-]
 
 def main():
     df = pd.read_csv(CSV)
-    missing = set(FEATURES + ["risk_lvl"]) - set(df.columns)
-    if missing:
-        raise ValueError(f"Training CSV is missing columns: {', '.join(sorted(missing))}")
-    if df.empty:
-        raise ValueError(f"Training CSV contains no rows: {CSV}")
-
-    X = df[FEATURES]
+    X = df[["cpu_pct", "mem_mb", "etype_encoded", "hour_of_day", "is_sys_dir", "proc_count"]]
     y = df["risk_lvl"]
-    if y.nunique() < 2:
-        raise ValueError("Training requires at least two distinct risk labels")
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+        X, y, test_size=0.2, random_state=42
     )
 
-    model = RandomForestClassifier(
-        n_estimators=200,
-        class_weight="balanced",
-        random_state=42,
-        n_jobs=-1,
-    )
-    model.fit(X_train.to_numpy(), y_train)
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
 
-    preds = model.predict(X_test.to_numpy())
-    print("Evaluation is on a synthetic classroom dataset; it does not estimate real-world detection performance.")
-    print(classification_report(y_test, preds, zero_division=0))
+    preds = model.predict(X_test)
+    print(classification_report(y_test, preds))
     print("confusion matrix:")
     print(confusion_matrix(y_test, preds))
 
